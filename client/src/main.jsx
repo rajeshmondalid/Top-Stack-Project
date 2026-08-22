@@ -2,8 +2,9 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 
-const API_URL = "http://localhost:5000/quotes";
-const AUTH_URL = "http://localhost:5000/auth";
+const API_ROOT = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:5000" : "/api");
+const API_URL = `${API_ROOT}/quotes`;
+const AUTH_URL = `${API_ROOT}/auth`;
 const emptyForm = { text: "", author: "", category: "" };
 const emptyAuthForm = { name: "", email: "", password: "" };
 

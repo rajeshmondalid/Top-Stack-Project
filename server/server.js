@@ -8,9 +8,26 @@ import { requireAuth } from "./middleware/auth.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
+let databaseConnection;
+
+function connectDatabase() {
+  if (mongoose.connection.readyState === 1) return Promise.resolve();
+  if (!databaseConnection) {
+    databaseConnection = mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/quote_collector");
+  }
+  return databaseConnection;
+}
 
 app.use(cors());
 app.use(express.json());
+app.use(async (req, res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Database connection failed" });
+  }
+});
 app.use("/auth", authRoutes);
 
 app.get("/quotes", async (req, res) => {
@@ -64,7 +81,8 @@ app.delete("/quotes/:id", requireAuth, async (req, res) => {
   }
 });
 
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quote_collector")
-  .then(() => app.listen(port, () => console.log(`API running on port ${port}`)))
-  .catch((error) => console.error("MongoDB connection failed:", error.message));
+if (process.env.VERCEL !== "1") {
+  app.listen(port, () => console.log(`API running on port ${port}`));
+}
+
+export default app;
