@@ -8,6 +8,12 @@ const AUTH_URL = `${API_ROOT}/auth`;
 const emptyForm = { text: "", author: "", category: "" };
 const emptyAuthForm = { name: "", email: "", password: "" };
 
+async function readResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) return response.json();
+  return { message: `Server returned ${response.status}. Check the Vercel API deployment.` };
+}
+
 function App() {
   const [session, setSession] = useState(() => JSON.parse(localStorage.getItem("quoteSession") || "null"));
   const [quotes, setQuotes] = useState([]);
@@ -46,7 +52,7 @@ function App() {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.token}` },
       body: JSON.stringify(form)
     });
-    const data = await response.json();
+    const data = await readResponse(response);
     if (!response.ok) return setMessage(data.message || "Could not save quote");
     setForm(emptyForm);
     setEditingId(null);
@@ -76,7 +82,7 @@ function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(authForm)
     });
-    const data = await response.json();
+    const data = await readResponse(response);
     if (!response.ok) return setMessage(data.message || "Could not authenticate");
     localStorage.setItem("quoteSession", JSON.stringify(data));
     setSession(data);
