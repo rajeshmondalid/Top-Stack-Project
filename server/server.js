@@ -1,0 +1,70 @@
+import "dotenv/config";
+import cors from "cors";
+import express from "express";
+import mongoose from "mongoose";
+import Quote from "./models/Quote.js";
+import authRoutes from "./routes/auth.js";
+import { requireAuth } from "./middleware/auth.js";
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+app.use("/auth", authRoutes);
+
+app.get("/quotes", async (req, res) => {
+  try {
+    const quotes = await Quote.find().sort({ createdAt: -1 });
+    res.json(quotes);
+  } catch (error) {
+    res.status(500).json({ message: "Could not fetch quotes" });
+  }
+});
+
+app.get("/quotes/:id", async (req, res) => {
+  try {
+    const quote = await Quote.findById(req.params.id);
+    if (!quote) return res.status(404).json({ message: "Quote not found" });
+    res.json(quote);
+  } catch (error) {
+    res.status(400).json({ message: "Invalid quote id" });
+  }
+});
+
+app.post("/quotes", requireAuth, async (req, res) => {
+  try {
+    const quote = await Quote.create(req.body);
+    res.status(201).json(quote);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.put("/quotes/:id", requireAuth, async (req, res) => {
+  try {
+    const quote = await Quote.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!quote) return res.status(404).json({ message: "Quote not found" });
+    res.json(quote);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete("/quotes/:id", requireAuth, async (req, res) => {
+  try {
+    const quote = await Quote.findByIdAndDelete(req.params.id);
+    if (!quote) return res.status(404).json({ message: "Quote not found" });
+    res.json({ message: "Quote deleted" });
+  } catch (error) {
+    res.status(400).json({ message: "Invalid quote id" });
+  }
+});
+
+mongoose
+  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quote_collector")
+  .then(() => app.listen(port, () => console.log(`API running on port ${port}`)))
+  .catch((error) => console.error("MongoDB connection failed:", error.message));
