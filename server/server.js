@@ -25,6 +25,14 @@ app.use((req, res, next) => {
   if (req.url.startsWith("/api/")) req.url = req.url.slice(4);
   next();
 });
+app.get("/health", async (req, res) => {
+  try {
+    await connectDatabase();
+    res.json({ connected: mongoose.connection.readyState === 1 });
+  } catch (error) {
+    res.status(503).json({ connected: false, message: "Database connection failed" });
+  }
+});
 app.use(async (req, res, next) => {
   try {
     await connectDatabase();
