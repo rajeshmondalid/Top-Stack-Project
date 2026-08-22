@@ -20,6 +20,11 @@ function connectDatabase() {
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  if (req.url === "/api") req.url = "/";
+  if (req.url.startsWith("/api/")) req.url = req.url.slice(4);
+  next();
+});
 app.use(async (req, res, next) => {
   try {
     await connectDatabase();

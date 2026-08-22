@@ -2,6 +2,7 @@
   "name": "quote-collector",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "build": "npm run build --prefix client"
   },
