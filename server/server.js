@@ -12,8 +12,12 @@ let databaseConnection;
 
 function connectDatabase() {
   if (mongoose.connection.readyState === 1) return Promise.resolve();
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/quote_collector";
   if (!databaseConnection) {
-    databaseConnection = mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/quote_collector");
+    databaseConnection = mongoose.connect(mongoUri).catch((error) => {
+      databaseConnection = null;
+      throw error;
+    });
   }
   return databaseConnection;
 }
@@ -30,7 +34,8 @@ app.get("/health", async (req, res) => {
     await connectDatabase();
     res.json({ connected: mongoose.connection.readyState === 1 });
   } catch (error) {
-    res.status(503).json({ connected: false, message: "Database connection failed" });
+    const hasDatabaseUrl = Boolean(process.env.MONGO_URI || process.env.MONGODB_URI);
+    res.status(503).json({ connected: false, message: hasDatabaseUrl ? "Atlas connection failed. Check Atlas Network Access and database credentials" : "MONGO_URI is missing in the deployment environment" });
   }
 });
 app.use(async (req, res, next) => {

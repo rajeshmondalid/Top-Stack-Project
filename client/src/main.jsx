@@ -26,6 +26,7 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [authForm, setAuthForm] = useState(emptyAuthForm);
   const [databaseStatus, setDatabaseStatus] = useState("checking");
+  const [databaseMessage, setDatabaseMessage] = useState("");
 
   useEffect(() => {
     fetchQuotes();
@@ -35,9 +36,12 @@ function App() {
   async function checkDatabase() {
     try {
       const response = await fetch(HEALTH_URL);
-      setDatabaseStatus(response.ok && (await response.json()).connected ? "connected" : "disconnected");
+      const data = await response.json();
+      setDatabaseStatus(response.ok && data.connected ? "connected" : "disconnected");
+      setDatabaseMessage(data.message || "");
     } catch (error) {
       setDatabaseStatus("disconnected");
+      setDatabaseMessage("The API is not reachable");
     }
   }
 
@@ -114,7 +118,7 @@ function App() {
   }
 
   if (!session) {
-    return <main className="auth-page"><section className="auth-card"><div className="brand"><span className="brand-mark">Q</span><span>Quote Collector</span></div><p className="eyebrow">Personal library</p><h1>{authMode === "login" ? "Welcome back." : "Create your account."}</h1><p className="auth-description">{authMode === "login" ? "Sign in to manage your collection." : "Start saving the words that matter to you."}</p><div className={`database-status ${databaseStatus}`}><span className="status-dot" /> Database {databaseStatus === "checking" ? "checking..." : databaseStatus === "connected" ? "connected" : "not connected"}</div><form onSubmit={submitAuth}>{authMode === "register" && <label>Full name<input name="name" value={authForm.name} onChange={updateAuthForm} required placeholder="Your name" /></label>}<label>Email<input type="email" name="email" value={authForm.email} onChange={updateAuthForm} required placeholder="you@example.com" /></label><label>Password<input type="password" name="password" value={authForm.password} onChange={updateAuthForm} required minLength="6" placeholder="At least 6 characters" /></label><button type="submit">{authMode === "login" ? "Sign in" : "Create account"}</button></form>{message && <p className="message">{message}</p>}<button className="switch-auth" onClick={() => { setAuthMode(authMode === "login" ? "register" : "login"); setMessage(""); }}>{authMode === "login" ? "Need an account? Create one" : "Already have an account? Sign in"}</button></section></main>;
+    return <main className="auth-page"><section className="auth-card"><div className="brand"><span className="brand-mark">Q</span><span>Quote Collector</span></div><p className="eyebrow">Personal library</p><h1>{authMode === "login" ? "Welcome back." : "Create your account."}</h1><p className="auth-description">{authMode === "login" ? "Sign in to manage your collection." : "Start saving the words that matter to you."}</p><div className={`database-status ${databaseStatus}`}><span className="status-dot" /> Database {databaseStatus === "checking" ? "checking..." : databaseStatus === "connected" ? "connected" : "not connected"}</div>{databaseMessage && databaseStatus === "disconnected" && <p className="database-message">{databaseMessage}</p>}<form onSubmit={submitAuth}>{authMode === "register" && <label>Full name<input name="name" value={authForm.name} onChange={updateAuthForm} required placeholder="Your name" /></label>}<label>Email<input type="email" name="email" value={authForm.email} onChange={updateAuthForm} required placeholder="you@example.com" /></label><label>Password<input type="password" name="password" value={authForm.password} onChange={updateAuthForm} required minLength="6" placeholder="At least 6 characters" /></label><button type="submit">{authMode === "login" ? "Sign in" : "Create account"}</button></form>{message && <p className="message">{message}</p>}<button className="switch-auth" onClick={() => { setAuthMode(authMode === "login" ? "register" : "login"); setMessage(""); }}>{authMode === "login" ? "Need an account? Create one" : "Already have an account? Sign in"}</button></section></main>;
   }
 
   const categories = [...new Set(quotes.map((quote) => quote.category))];
