@@ -69,48 +69,7 @@ export function AuthPage({
           <p className="pro-auth-sub">Sign in to your knowledge and quotes workspace.</p>
         </div>
 
-        {/* Database Status Alert */}
-        <div className={`pro-auth-db-status status-${databaseStatus}`}>
-          <div className="db-status-left">
-            <span className="pro-status-dot" />
-            <span>
-              {databaseStatus === "connected" && "MongoDB Atlas Connected"}
-              {databaseStatus === "checking" && "Checking database connection..."}
-              {databaseStatus === "disconnected" && "Database not connected"}
-            </span>
-          </div>
-          <div className="db-status-right">
-            <button
-              type="button"
-              className="pro-status-refresh"
-              onClick={onCheckDatabase}
-              title="Test connection"
-            >
-              <IconRefresh className="w-3.5 h-3.5" />
-            </button>
-            {databaseStatus === "disconnected" && (
-              <button
-                type="button"
-                className="pro-troubleshoot-btn"
-                onClick={() => setShowTroubleshoot(!showTroubleshoot)}
-              >
-                {showTroubleshoot ? "Hide" : "Help"}
-              </button>
-            )}
-          </div>
-        </div>
 
-        {/* Troubleshooting box if offline */}
-        {databaseStatus === "disconnected" && showTroubleshoot && (
-          <div className="pro-troubleshoot-panel">
-            <strong>Connecting MongoDB Atlas:</strong>
-            <ol>
-              <li>In Atlas &gt; <strong>Network Access</strong>, click <strong>Allow Access From Anywhere (0.0.0.0/0)</strong>.</li>
-              <li>In Vercel &gt; <strong>Settings &gt; Environment Variables</strong>, set <code>MONGO_URI</code> and <code>JWT_SECRET</code>.</li>
-              <li>Or click <strong>Explore Demo Mode</strong> below to preview immediately.</li>
-            </ol>
-          </div>
-        )}
 
         {/* Segmented Switch: Login / Register */}
         <div className="pro-segmented-tabs">

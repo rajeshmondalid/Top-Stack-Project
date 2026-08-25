@@ -28,30 +28,14 @@ export function Navbar({
         {/* Brand */}
         <div className="pro-brand">
           <div className="pro-brand-icon">
-            <IconQuote className="w-4 h-4" />
+            <IconQuote className="w-5 h-5" />
           </div>
           <div className="pro-brand-info">
             <span className="pro-brand-title">Quote Collector</span>
-            <span className="pro-brand-tag">Workspace</span>
           </div>
         </div>
 
-        {/* Database Status Pill */}
-        <div
-          className={`pro-status-pill status-${databaseStatus}`}
-          onClick={onCheckDatabase}
-          title="Click to test database connection"
-        >
-          <span className="pro-status-dot" />
-          <span className="pro-status-label">
-            {databaseStatus === "connected" && "Atlas Online"}
-            {databaseStatus === "checking" && "Connecting..."}
-            {databaseStatus === "disconnected" && "Offline Mode"}
-          </span>
-          <button className="pro-status-refresh" aria-label="Refresh connection">
-            <IconRefresh className="w-3 h-3" />
-          </button>
-        </div>
+
 
         {/* Right Action Tools */}
         <div className="pro-navbar-actions">
