@@ -67,6 +67,17 @@ export function AuthPage({
           </div>
           <h1 className="pro-auth-title">Quote Collector</h1>
           <p className="pro-auth-sub">Sign in to your knowledge and quotes workspace.</p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '24px', padding: '16px', backgroundColor: 'var(--pro-danger-light)', border: '1px solid rgba(196, 91, 91, 0.25)', borderRadius: 'var(--radius-md)', color: 'var(--pro-danger)', fontSize: '13px', textAlign: 'left', lineHeight: '1.5', boxShadow: 'var(--shadow-sm)' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: '2px', flexShrink: 0 }}>
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div>
+              <strong style={{ fontWeight: 700, display: 'block', marginBottom: '4px' }}>Public Test Accounts Disclaimer</strong>
+              Default test accounts and their passwords are publicly available on this login page. I am not responsible for any inappropriate or incorrect quotes posted by users, as anyone can log into these demonstration accounts.
+            </div>
+          </div>
         </div>
 
 
